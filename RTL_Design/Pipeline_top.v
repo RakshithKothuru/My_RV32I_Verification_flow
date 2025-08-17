@@ -4,7 +4,8 @@ module Pipeline_top(clk, rst);
     input clk, rst;
 
     // Declaration of Interim Wires
-    wire PCSrcE, RegWriteW, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, BranchE, RegWriteM, MemWriteM, ResultSrcM, ResultSrcW;
+    wire PCSrcE, RegWriteW, RegWriteE, ALUSrcE, MemWriteE, BranchE, RegWriteM, MemWriteM, JumpD, JumpE;
+    wire [1:0] ResultSrcE, ResultSrcM, ResultSrcW;
     wire [2:0] ALUControlE;
     wire [4:0] RD_E, RD_M, RDW;
     wire [31:0] PCTargetE, InstrD, PCD, PCPlus4D, ResultW, RD1_E, RD2_E, Imm_Ext_E, PCE, PCPlus4E, PCPlus4M, WriteDataM, ALU_ResultM;
@@ -54,7 +55,8 @@ module Pipeline_top(clk, rst);
                         .RS1_E(RS1_E),
                         .RS2_E(RS2_E),
                         .flushD_branch_hazard(flushD_branch_hazard),
-                        .flushD_load_hazard(flushD_load_hazard)
+                        .flushD_load_hazard(flushD_load_hazard),
+                        .JumpE(JumpE)  
                     );
 
     // Execute Stage
@@ -86,7 +88,8 @@ module Pipeline_top(clk, rst);
                         .ForwardA_E(ForwardAE),
                         .ForwardB_E(ForwardBE),
                         .flushF_branch_hazard(flushF_branch_hazard),
-                        .flushD_branch_hazard(flushD_branch_hazard)
+                        .flushD_branch_hazard(flushD_branch_hazard),
+                        .JumpE(JumpE)
                     );
     
     // Memory Stage
