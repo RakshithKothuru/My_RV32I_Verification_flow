@@ -1,16 +1,17 @@
-module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, BranchE, ALUControlE, 
+module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, BranchE, JumpE, ALUControlE, 
     RD1_E, RD2_E, Imm_Ext_E, RD_E, PCE, PCPlus4E, PCSrcE, PCTargetE, RegWriteM, MemWriteM, ResultSrcM, RD_M, PCPlus4M, WriteDataM, ALU_ResultM, ResultW, ForwardA_E, ForwardB_E, flushF_branch_hazard, flushD_branch_hazard);
 
     // Declaration I/Os
-    input clk, rst, RegWriteE,ALUSrcE,MemWriteE,ResultSrcE,BranchE;
+    input clk, rst, RegWriteE,ALUSrcE,MemWriteE,BranchE,JumpE;
     input [2:0] ALUControlE;
     input [31:0] RD1_E, RD2_E, Imm_Ext_E;
     input [4:0] RD_E;
     input [31:0] PCE, PCPlus4E;
     input [31:0] ResultW;
-    input [1:0] ForwardA_E, ForwardB_E;
+    input [1:0] ForwardA_E, ForwardB_E, ResultSrcE;
 
-    output PCSrcE, RegWriteM, MemWriteM, ResultSrcM, flushF_branch_hazard, flushD_branch_hazard;
+    output PCSrcE, RegWriteM, MemWriteM, flushF_branch_hazard, flushD_branch_hazard;
+    output [1:0] ResultSrcM;
     output [4:0] RD_M; 
     output [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
     output [31:0] PCTargetE;
@@ -21,7 +22,8 @@ module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, Branch
     wire ZeroE;
 
     // Declaration of Register
-    reg RegWriteE_r, MemWriteE_r, ResultSrcE_r;
+    reg RegWriteE_r, MemWriteE_r;
+    reg [1:0] ResultSrcE_r;
     reg [4:0] RD_E_r;
     reg [31:0] PCPlus4E_r, RD2_E_r, ResultE_r;
 
@@ -75,7 +77,7 @@ module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, Branch
         if(rst == 1'b0) begin
             RegWriteE_r <= 1'b0; 
             MemWriteE_r <= 1'b0; 
-            ResultSrcE_r <= 1'b0;
+            ResultSrcE_r <= 2'b00;
             RD_E_r <= 5'h00;
             PCPlus4E_r <= 32'h00000000; 
             RD2_E_r <= 32'h00000000; 
@@ -93,7 +95,7 @@ module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, Branch
     end
 
     // Output Assignments
-    assign PCSrcE = ZeroE &  BranchE;
+    assign PCSrcE = JumpE | (ZeroE &  BranchE);
     assign RegWriteM = RegWriteE_r;
     assign MemWriteM = MemWriteE_r;
     assign ResultSrcM = ResultSrcE_r;
@@ -101,7 +103,7 @@ module execute_cycle(clk, rst, RegWriteE, ALUSrcE, MemWriteE, ResultSrcE, Branch
     assign PCPlus4M = PCPlus4E_r;
     assign WriteDataM = RD2_E_r;
     assign ALU_ResultM = ResultE_r;
-    assign flushD_branch_hazard = ZeroE &  BranchE;
-    assign flushF_branch_hazard = ZeroE &  BranchE;
+    assign flushD_branch_hazard = JumpE | (ZeroE &  BranchE);
+    assign flushF_branch_hazard = JumpE | (ZeroE &  BranchE);
 
 endmodule
