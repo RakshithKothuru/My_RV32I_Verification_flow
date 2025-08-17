@@ -101,7 +101,7 @@ The design includes:
 | Hazard Type           | Where Resolved | Penalty (Cycles) |
 |-----------------------|----------------|------------------|
 | RAW (with forwarding) | EX             | 0                |
-| Load–use              | MEM→WB timing  | +1               |
+| Load–use (forwarding) | MEM→WB timing  | +1               |
 | BEQ taken             | EX             | +2               |
 | BEQ not taken         | —              | 0                |
 | JAL (EX target)       | EX             | +2               |
