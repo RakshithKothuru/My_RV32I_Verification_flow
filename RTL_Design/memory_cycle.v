@@ -2,11 +2,13 @@ module memory_cycle(clk, rst, RegWriteM, MemWriteM, ResultSrcM, RD_M, PCPlus4M, 
     ALU_ResultM, RegWriteW, ResultSrcW, RD_W, PCPlus4W, ALU_ResultW, ReadDataW);
     
     // Declaration of I/Os
-    input clk, rst, RegWriteM, MemWriteM, ResultSrcM;
+    input clk, rst, RegWriteM, MemWriteM;
+    input [1:0] ResultSrcM;
     input [4:0] RD_M; 
     input [31:0] PCPlus4M, WriteDataM, ALU_ResultM;
 
-    output RegWriteW, ResultSrcW; 
+    output RegWriteW;
+    output [1:0] ResultSrcW; 
     output [4:0] RD_W;
     output [31:0] PCPlus4W, ALU_ResultW, ReadDataW;
 
@@ -14,7 +16,8 @@ module memory_cycle(clk, rst, RegWriteM, MemWriteM, ResultSrcM, RD_M, PCPlus4M, 
     wire [31:0] ReadDataM;
 
     // Declaration of Interim Registers
-    reg RegWriteM_r, ResultSrcM_r;
+    reg RegWriteM_r;
+    reg [1:0] ResultSrcM_r;
     reg [4:0] RD_M_r;
     reg [31:0] PCPlus4M_r, ALU_ResultM_r, ReadDataM_r;
 
@@ -32,7 +35,7 @@ module memory_cycle(clk, rst, RegWriteM, MemWriteM, ResultSrcM, RD_M, PCPlus4M, 
     always @(posedge clk or negedge rst) begin
         if (rst == 1'b0) begin
             RegWriteM_r <= 1'b0; 
-            ResultSrcM_r <= 1'b0;
+            ResultSrcM_r <= 2'b00;
             RD_M_r <= 5'h00;
             PCPlus4M_r <= 32'h00000000; 
             ALU_ResultM_r <= 32'h00000000; 
