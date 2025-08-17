@@ -1,10 +1,10 @@
-module Control_Unit_Top(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,funct3,funct7,ALUControl);
+module Control_Unit_Top(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,funct3,funct7,ALUControl,Jump);
 
     input [6:0]Op,funct7;
     input [2:0]funct3;
-    output RegWrite,ALUSrc,MemWrite,ResultSrc,Branch;
-    output [1:0]ImmSrc;
-    output [2:0]ALUControl;
+    output RegWrite,ALUSrc,MemWrite,Branch,Jump;
+    output [1:0] ResultSrc;
+    output [2:0] ALUControl,ImmSrc;
 
     wire [1:0]ALUOp;
 
@@ -16,7 +16,8 @@ module Control_Unit_Top(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,func
                 .ResultSrc(ResultSrc),
                 .Branch(Branch),
                 .ALUSrc(ALUSrc),
-                .ALUOp(ALUOp)
+                .ALUOp(ALUOp),
+                .Jump(Jump)
     );
 
     ALU_Decoder ALU_Decoder(
@@ -26,6 +27,7 @@ module Control_Unit_Top(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,func
                             .op(Op),
                             .ALUControl(ALUControl)
     );
+
 
 endmodule
 
