@@ -60,7 +60,7 @@ module fetch_cycle(clk, rst, PCSrcE, PCTargetE, InstrD, PCD, PCPlus4D, flushF_br
             InstrF_reg <= 32'h00000013; // Insert NOP on flush
         end
     
-        else if (stallF_load_hazard) begin
+        else if (!stallF_load_hazard) begin
             InstrF_reg <= InstrF;
             PCF_reg <= PCF;
             PCPlus4F_reg <= PCPlus4F;
