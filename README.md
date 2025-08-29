@@ -26,11 +26,11 @@ The design includes:
 ---
 
 ## 🧮 Supported Instruction Types
-- ✅ **R-Type**
-- ✅ **I-Type**
-- ✅ **S-Type**
+- ✅ **R-Type** (includes ADD, SUB, AND, OR, SLT)
+- ✅ **I-Type** (includes LW, ADDI, ANDI, ORI, SLTI)
+- ✅ **S-Type** (includes SW)
 - ✅ **B-Type** (includes BEQ)
-- ✅ **J-Type** (includes JAL)
+- ✅ **J-Type** (includes JAL, JALR)
 
 ---
 
