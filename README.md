@@ -30,7 +30,7 @@ The design includes:
 - ✅ **I-Type** (includes LW, ADDI, ANDI, ORI, SLTI)
 - ✅ **S-Type** (includes SW)
 - ✅ **B-Type** (includes BEQ)
-- ✅ **J-Type** (includes JAL, JALR)
+- ✅ **J-Type** (includes JAL)
 
 ---
 
