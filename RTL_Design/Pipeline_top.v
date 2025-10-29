@@ -1,10 +1,12 @@
-module Pipeline_top(clk, rst);
+module Pipeline_top(clk, rst, cycle_count, instr_retired);
 
     // Declaration of I/O
     input clk, rst;
+    output [31:0] cycle_count;
+    output [31:0] instr_retired;
 
     // Declaration of Interim Wires
-    wire PCSrcE, RegWriteW, RegWriteE, ALUSrcE, MemWriteE, BranchE, RegWriteM, MemWriteM, JumpD, JumpE;
+    wire PCSrcE, RegWriteW, RegWriteE, ALUSrcE, MemWriteE, BranchE, RegWriteM, MemWriteM, MemWriteW, JumpD, JumpE, BranchM, BranchW;
     wire [1:0] ResultSrcE, ResultSrcM, ResultSrcW;
     wire [2:0] ALUControlE;
     wire [4:0] RD_E, RD_M, RDW;
@@ -89,7 +91,8 @@ module Pipeline_top(clk, rst);
                         .ForwardB_E(ForwardBE),
                         .flushF_branch_hazard(flushF_branch_hazard),
                         .flushD_branch_hazard(flushD_branch_hazard),
-                        .JumpE(JumpE)
+                        .JumpE(JumpE),
+                        .BranchM(BranchM)
                     );
     
     // Memory Stage
@@ -108,7 +111,10 @@ module Pipeline_top(clk, rst);
                         .RD_W(RDW), 
                         .PCPlus4W(PCPlus4W), 
                         .ALU_ResultW(ALU_ResultW), 
-                        .ReadDataW(ReadDataW)
+                        .ReadDataW(ReadDataW),
+                        .MemWriteW(MemWriteW),
+                        .BranchW(BranchW),
+                        .BranchM(BranchM)
                     );
 
     // Write Back Stage
@@ -144,5 +150,28 @@ module Pipeline_top(clk, rst);
                         .stallF_load_hazard(stallF_load_hazard),
                         .flushD_load_hazard(flushD_load_hazard)
                         );
+    
+    
+    // -----------------------------
+    // PERFORMANCE COUNTERS
+    // -----------------------------
+
+    reg [31:0] cycle_reg;
+    reg [31:0] instr_reg;
+
+    assign cycle_count   = cycle_reg;
+    assign instr_retired = instr_reg;
+
+    always @(posedge clk or negedge rst) begin
+        if (!rst) begin
+            cycle_reg <= 32'd0;
+            instr_reg <= 32'd0;
+        end else begin
+            cycle_reg <= cycle_reg + 1;
+            if ((RegWriteW && (RDW != 5'h00)) || BranchW || MemWriteW) // increment when instruction commits
+                instr_reg <= instr_reg + 1;
+        end
+    end
+
 
 endmodule
