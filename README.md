@@ -4,16 +4,9 @@
 This repository contains the RTL design and simulation of a 5-stage pipelined 32-bit **RISC-V** processor.  
 The processor implements a subset of the **RV32I** instruction set and follows the classic pipeline architecture:
 
-- **Instruction Fetch (IF)**
-- **Instruction Decode (ID)**
-- **Execute (EX)**
-- **Memory Access (MEM)**
-- **Write Back (WB)**
+> **IF → ID → EX → MEM → WB**
 
-The design includes:
-- **Data forwarding** to reduce stalls
-- **Stalling logic** for load-use hazard resolution
-- **Flushing logic** for control hazard resolution on taken branches and jumps
+The processor handles **data and control hazards** effectively using dedicated **Forwarding** and **Hazard** units, ensuring correct execution and efficient performance.
 
 ---
 
@@ -106,15 +99,6 @@ The design includes:
 | BEQ not taken         | —              | 0                |
 | JAL (EX target)       | EX             | +2               |
 | Structural (Harvard)  | —              | 0                |
-
----
-
-## 🚀 Recent Additions
-- ➕ `ADDI` (I-type) support via ALU operand mux (reg vs. imm)  
-- 🔁 `BEQ` (B-type) support with flush on taken branch  
-- 🧹 **Flushing logic**: clears IF/ID (and optionally ID/EX) when branch/jump is taken  
-- ⏸ **Stalling logic**: hazard detection unit prevents PC and IF/ID updates during load-use hazards  
-- 🆕 **JAL (J-type) support**: jump target computed as `PC + immJ`, with `rd = PC+4`  
 
 ---
 
