@@ -102,6 +102,23 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
+
+## 📊 Instruction Type Distribution
+
+The benchmark program executed a total of **33 instructions**, categorized as follows:
+
+| **Instruction Type** | **Count** | **Percentage** |
+|-----------------------|:---------:|:--------------:|
+| **R-type**            | 21        | 63.64%         |
+| **Jump**              | 1         | 3.03%          |
+| **Branch**            | 1         | 3.03%          |
+| **Store**             | 2         | 6.06%          |
+| **Load**              | 2         | 6.06%          |
+| **I-type**            | 6         | 18.18%         |
+| **Total**             | **33**    | **100%**       |
+
+---
+
 ## 🔗 References
 - Patterson, D. A., & Hennessy, J. L. (2017). *Computer Organization and Design RISC-V Edition: The Hardware Software Interface*. Morgan Kaufmann.  
 - [RISC-V ISA Manual (Volume I: User-Level ISA)](https://riscv.org/technical/specifications/)  
