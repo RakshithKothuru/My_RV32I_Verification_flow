@@ -27,50 +27,6 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
-## 🧠 Arithmetic, Logical & Control Operations Supported
-- ✅ **Addition** (`ADD`, `ADDI`)
-- ✅ **Subtraction** (`SUB`)
-- ✅ **Bitwise AND** (`AND`)
-- ✅ **Bitwise OR** (`OR`)
-- ✅ **Set Less Than** (`SLT`)
-- ✅ **Branch if Equal** (`BEQ`)
-- ✅ **Jump and Link** (`JAL`)
-
----
-
-## 📦 Pipeline Stage Details
-
-### 🟦 Instruction Fetch (IF)
-- Fetches instructions using the Program Counter (PC).
-- **PC source mux** selects among:
-  - `PC+4`
-  - **branch target (B-type)**
-  - **jump target (JAL)**
-- **Flush logic** injects a bubble into IF/ID when a branch or jump is taken.
-- **Stall signal** freezes PC update during load-use hazards.
-
-### 🟩 Instruction Decode (ID)
-- Decodes opcode/fields, reads operands from the register file.
-- **Immediate Generator** supports I-type, B-type, and J-type encodings.
-- Generates control signals for EX/MEM/WB.
-- **Hazard Detection Unit** checks for load-use hazards and triggers stall if needed.
-
-### 🟨 Execute (EX)
-- ALU performs arithmetic/logic and branch compare for `BEQ`.
-- **Branch Unit** computes `target = PC + immB` and checks `(rs1 == rs2)`.
-- **Jump Unit** computes `target = PC + immJ` for `JAL`.
-- On **taken branch/jump**, asserts **flush** to squash IF/ID and redirect PC.
-- **Forwarding logic** bypasses data from later pipeline stages.
-
-### 🟧 Memory Access (MEM)
-- Performs memory reads/writes for load/store (if implemented).
-- Simple synchronous interface.
-
-### 🟥 Write Back (WB)
-- Writes ALU, memory result, or `PC+4` (for JAL) back to the destination register.
-
----
-
 ## ⚠️ Hazard Handling and Penalties
 
 ### 🔹 Data Hazards
@@ -118,6 +74,19 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 | **Total**             | **33**    | **100%**       |
 
 ---
+
+## ⚙️ Performance Report
+
+| **Metric**                      | **Value**    |
+|---------------------------------|:-------------:|
+| **Total Instructions Executed** | 33            |
+| **Total Cycles**                | 42            |
+| **Average CPI**                 | 1.2727        |
+
+---
+
+✅ The pipeline achieved efficient performance with an **average CPI of 1.27**, demonstrating effective hazard handling and instruction throughput.
+
 
 ## 🔗 References
 - Patterson, D. A., & Hennessy, J. L. (2017). *Computer Organization and Design RISC-V Edition: The Hardware Software Interface*. Morgan Kaufmann.  
