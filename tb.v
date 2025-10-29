@@ -12,7 +12,7 @@ module tb();
         rst <= 1'b0;
         #100;
         rst <= 1'b1;
-        #2000;
+        #4300;
 
         $display("\n---------------------------------------------");
         $display("   Simulation Finished || Performance Report  ");
