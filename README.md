@@ -59,7 +59,7 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 
 ## ⚙️ Performance Report
 
-![RV32I Architecture](Performance_report.png)
+![RV32I Architecture](Images/Performance_report.png)
 
 | **Metric**                      | **Value**    |
 |---------------------------------|:-------------:|
