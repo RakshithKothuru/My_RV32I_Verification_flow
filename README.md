@@ -10,12 +10,30 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
-## 🧮 Supported Instruction Types
+## ⚙️ Key Features
+
+### 🧩 Pipeline Architecture
+- **5-Stage Pipelined Datapath:** IF, ID, EX, MEM, WB
+- **Base ISA:** Partially implements the **RV32I** instruction set
+ 
+### 🧮 Supported Instruction Types
 - ✅ **R-Type** (includes ADD, SUB, AND, OR, SLT)
 - ✅ **I-Type** (includes LW, ADDI, ANDI, ORI, SLTI)
 - ✅ **S-Type** (includes SW)
 - ✅ **B-Type** (includes BEQ)
 - ✅ **J-Type** (includes JAL)
+
+
+
+### 🔁 Hazard Handling
+- **Forwarding Unit:**  
+Resolves **Read-After-Write (RAW)** data hazards from **MEM** and **WB** stages.
+- **Hazard Unit:**  
+Handles **load-use stalls** (1-cycle bubble) and **branch flushes** (via NOP insertion).
+
+### ⚡ Performance
+- Achieves an **average CPI ≈ 1.2727** on the comprehensive test suite.
+- Demonstrates **high throughput and efficiency** compared to the single-cycle version.
 
 ---
 
