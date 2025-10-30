@@ -19,6 +19,10 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
+## 🧠 RV32I 5-Stage Pipelined Processor Architecture
+
+![RV32I Architecture](My_RV32I_Architecture.png)
+
 ## 📊 Instruction Type Distribution
 
 The benchmark program executed a total of **33 instructions**, categorized as follows:
