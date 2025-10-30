@@ -59,11 +59,25 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 
 ## ⚙️ Performance Report
 
+![RV32I Architecture](Performance_report.png)
+
 | **Metric**                      | **Value**    |
 |---------------------------------|:-------------:|
-| **Total Instructions Executed** | 33            |
 | **Total Cycles**                | 42            |
+| **Total Instructions Executed** | 33            |
 | **Average CPI**                 | 1.2727        |
+
+- 37 cycles as for theory for 33 instructions, the formula is (n-1+k) where k are the stages and n is the total no. of instructions.
+- So for n = 33 , it should be total of 37 cycles but for 1 branch, 1 jump success and 1 dependent load. There will be 5 penalties.
+
+| Core | Cycles | Instructions | CPI |
+|---:|---:|---:|---:|
+| Single-Cycle RV32I | 33 | 33 | 1.00 |
+| Pipelined RV32I | 42 | 33 | 1.27 |
+
+- Note: pipeline fill/drain and stalls cause CPI > 1; the pipelined design still wins in time because of shorter clock period per stage.
+- Also we haven't considered NOP Instructions due to branch and jump success as they are not useful Instructions.
+---
 
 ---
 
