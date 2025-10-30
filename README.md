@@ -77,12 +77,7 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 
 - Note: pipeline fill/drain and stalls cause CPI > 1; the pipelined design still wins in time because of shorter clock period per stage.
 - Also we haven't considered NOP Instructions due to branch and jump success as they are not useful Instructions.
----
-
----
-
-✅ The pipeline achieved efficient performance with an **average CPI of 1.27**, demonstrating effective hazard handling and instruction throughput.
-
+ 
 ---
 
 ## ⚠️ Hazard Handling and Penalties
