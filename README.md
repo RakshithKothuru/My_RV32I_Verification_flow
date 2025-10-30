@@ -10,20 +10,42 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
-## 🛠️ Technologies Used
-- ✅ Verilog HDL  
-- ✅ Icarus Verilog (simulation)  
-- ✅ GTKWave (waveform visualization)  
-- ✅ VS Code (development)  
-
----
-
 ## 🧮 Supported Instruction Types
 - ✅ **R-Type** (includes ADD, SUB, AND, OR, SLT)
 - ✅ **I-Type** (includes LW, ADDI, ANDI, ORI, SLTI)
 - ✅ **S-Type** (includes SW)
 - ✅ **B-Type** (includes BEQ)
 - ✅ **J-Type** (includes JAL)
+
+---
+
+## 📊 Instruction Type Distribution
+
+The benchmark program executed a total of **33 instructions**, categorized as follows:
+
+| **Instruction Type** | **Count** | **Percentage** |
+|-----------------------|:---------:|:--------------:|
+| **R-type**            | 21        | 63.64%         |
+| **Jump**              | 1         | 3.03%          |
+| **Branch**            | 1         | 3.03%          |
+| **Store**             | 2         | 6.06%          |
+| **Load**              | 2         | 6.06%          |
+| **I-type**            | 6         | 18.18%         |
+| **Total**             | **33**    | **100%**       |
+
+---
+
+## ⚙️ Performance Report
+
+| **Metric**                      | **Value**    |
+|---------------------------------|:-------------:|
+| **Total Instructions Executed** | 33            |
+| **Total Cycles**                | 42            |
+| **Average CPI**                 | 1.2727        |
+
+---
+
+✅ The pipeline achieved efficient performance with an **average CPI of 1.27**, demonstrating effective hazard handling and instruction throughput.
 
 ---
 
@@ -58,34 +80,13 @@ The processor handles **data and control hazards** effectively using dedicated *
 
 ---
 
-
-## 📊 Instruction Type Distribution
-
-The benchmark program executed a total of **33 instructions**, categorized as follows:
-
-| **Instruction Type** | **Count** | **Percentage** |
-|-----------------------|:---------:|:--------------:|
-| **R-type**            | 21        | 63.64%         |
-| **Jump**              | 1         | 3.03%          |
-| **Branch**            | 1         | 3.03%          |
-| **Store**             | 2         | 6.06%          |
-| **Load**              | 2         | 6.06%          |
-| **I-type**            | 6         | 18.18%         |
-| **Total**             | **33**    | **100%**       |
+## 🛠️ Technologies Used
+- ✅ Verilog HDL  
+- ✅ Icarus Verilog (simulation)  
+- ✅ GTKWave (waveform visualization)  
+- ✅ VS Code (development)  
 
 ---
-
-## ⚙️ Performance Report
-
-| **Metric**                      | **Value**    |
-|---------------------------------|:-------------:|
-| **Total Instructions Executed** | 33            |
-| **Total Cycles**                | 42            |
-| **Average CPI**                 | 1.2727        |
-
----
-
-✅ The pipeline achieved efficient performance with an **average CPI of 1.27**, demonstrating effective hazard handling and instruction throughput.
 
 
 ## 🔗 References
