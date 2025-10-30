@@ -26,11 +26,11 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 | **Instruction Type** | **Count** | **Percentage** |
 |-----------------------|:---------:|:--------------:|
 | **R-type**            | 21        | 63.64%         |
+| **Load**              | 2         | 6.06%          |
 | **Jump**              | 1         | 3.03%          |
+| **I-type**            | 6         | 18.18%         |
 | **Branch**            | 1         | 3.03%          |
 | **Store**             | 2         | 6.06%          |
-| **Load**              | 2         | 6.06%          |
-| **I-type**            | 6         | 18.18%         |
 | **Total**             | **33**    | **100%**       |
 
 ---
