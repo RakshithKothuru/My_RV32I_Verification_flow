@@ -37,7 +37,7 @@ Handles **load-use stalls** (1-cycle bubble) and **branch flushes** (via NOP ins
 
 ---
 
-## 🧠 RV32I 5-Stage Pipelined Processor Architecture
+## 🧠 Processor Architecture
 
 ![RV32I Architecture](Images/My_RV32I_Architecture.png)
 
