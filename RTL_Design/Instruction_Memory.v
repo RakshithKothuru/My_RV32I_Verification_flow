@@ -40,7 +40,7 @@ end*/
 
 // Original testcase
 
-initial begin
+/*initial begin
     // ---------- Block 1 ( 1 branch and 1 jump) ----------
     mem[0]  = 32'h000002B3; // ADD x5, x0, x0
     mem[1]  = 32'h00000333; // ADD x6, x0, x0
@@ -85,6 +85,10 @@ initial begin
     mem[36] = 32'h00000333; // ADD x6, x0, x0
     mem[37] = 32'h00552023; // SW x5, 0(x10)
     mem[38] = 32'h00000333; // ADD x6, x0, x0
+end*/
+
+  initial begin
+    $readmemh("memfile.hex",mem);
 end
 
 
