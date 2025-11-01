@@ -87,7 +87,7 @@ end*/
     mem[38] = 32'h00000333; // ADD x6, x0, x0
 end*/
 
-  initial begin
+initial begin
     $readmemh("memfile.hex",mem);
 end
 
