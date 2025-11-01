@@ -1,0 +1,39 @@
+000002B3    // ADD  x5, x0, x0
+00000333    // ADD  x6, x0, x0
+00628863    // BEQ  x5, x6, +16 
+002083B3    // ADD  x7, x1, x4 (flush)
+00000433    // ADD  x8, x0, x0 (flush)
+006284B3    // ADD  x9, x5, x6
+01000FEF    // JAL  x31, 16  
+000305B3    // ADD  x11, x6, x0 (flush)
+00000433    // ADD  x8, x0, x0  (flush)
+000002B3    // ADD  x5, x0, x0
+00000333    // ADD  x6, x0, x0
+00A08293    // ADDI x5, x1, 10
+00A08293    // ADDI x5, x1, 10
+00A08293    // ADDI x5, x1, 10
+00000333    // ADD  x6, x0, x0
+006284B3    // ADD  x7, x1, x4
+0052A303    // LW   x6, 5(x5)   (data dependent load)
+006284B3    // ADD  x9, x5, x6  (stall)
+000305B3    // ADD  x11, x6, x0
+00000433    // ADD  x8, x0, x0
+000002B3    // ADD  x5, x0, x0
+00000333    // ADD  x6, x0, x0
+00A08293    // ADDI x5, x1, 10
+00000333    // ADD  x6, x0, x0
+0052A303    // LW   x6, 5(x5)   (data independent load)
+00000333    // ADD  x6, x0, x0
+00A08293    // ADDI x5, x1, 10
+00000333    // ADD  x6, x0, x0
+002083B3    // ADD  x7, x1, x4
+00552023    // SW   x5, 0(x10)
+006284B3    // ADD  x9, x5, x6
+00A08293    // ADDI x5, x1, 10
+00000433    // ADD  x8, x0, x0
+000002B3    // ADD  x5, x0, x0
+00000333    // ADD  x6, x0, x0
+000002B3    // ADD  x5, x0, x0
+00000333    // ADD  x6, x0, x0
+00552023    // SW   x5, 0(x10)
+00000333    // ADD  x6, x0, x0
