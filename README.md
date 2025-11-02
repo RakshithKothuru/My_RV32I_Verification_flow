@@ -61,12 +61,6 @@ The benchmark program executed a total of **33 instructions**, categorized as fo
 
 ![RV32I Architecture](Images/Performance_report.png)
 
-| **Metric**                      | **Value**    |
-|---------------------------------|:-------------:|
-| **Total Cycles**                | 42            |
-| **Total Instructions Executed** | 33            |
-| **Average CPI**                 | 1.2727        |
-
 - 37 cycles as for theory for 33 instructions, the formula is (n-1+k) where k are the stages and n is the total no. of instructions.
 - So for n = 33 , it should be total of 37 cycles but for 1 branch, 1 jump success and 1 dependent load. There will be 5 penalties.
 
