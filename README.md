@@ -1,4 +1,4 @@
-# 🚀 5-Stage Pipelined RISC-V Processor
+# 🚀 RISC-V CPU
 
 ## 📌 Project Overview
 This repository contains the RTL design and simulation of a 5-stage pipelined 32-bit **RISC-V** processor.  
