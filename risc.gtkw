@@ -1,0 +1,83 @@
+[*]
+[*] GTKWave Analyzer v3.3.48 (w)1999-2013 BSI
+[*] Thu Dec 11 10:04:11 2025
+[*]
+[dumpfile] "C:\Users\Raksh\OneDrive\Desktop\RTL_Projects\riscv\risc.vcd"
+[dumpfile_mtime] "Thu Dec 11 09:59:23 2025"
+[dumpfile_size] 24645
+[savefile] "C:\Users\Raksh\OneDrive\Desktop\RTL_Projects\riscv\risc.gtkw"
+[timestart] 0
+[size] 1280 729
+[pos] -165 -122
+*-8.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[treeopen] tb.dut.
+[sst_width] 197
+[signals_width] 190
+[sst_expanded] 1
+[sst_vpaned_height] 198
+@28
+tb.clk
+tb.rst
+@22
+tb.cycle_count[31:0]
+tb.instr_retired[31:0]
+tb.dut.Fetch.PCF[31:0]
+tb.dut.Fetch.InstrF[31:0]
+tb.dut.Fetch.PCD[31:0]
+tb.dut.Fetch.InstrD[31:0]
+@28
+tb.dut.StallDetect.hazard
+tb.dut.Fetch.stallF_load_hazard
+tb.dut.StallDetect.flushD_load_hazard
+tb.dut.Execute.JumpE
+tb.dut.Execute.BranchE
+tb.dut.Fetch.flushF_branch_hazard
+tb.dut.Execute.flushD_branch_hazard
+@c00022
+tb.dut.WriteBack.ALU_ResultW[31:0]
+@28
+(0)tb.dut.WriteBack.ALU_ResultW[31:0]
+(1)tb.dut.WriteBack.ALU_ResultW[31:0]
+(2)tb.dut.WriteBack.ALU_ResultW[31:0]
+(3)tb.dut.WriteBack.ALU_ResultW[31:0]
+(4)tb.dut.WriteBack.ALU_ResultW[31:0]
+(5)tb.dut.WriteBack.ALU_ResultW[31:0]
+(6)tb.dut.WriteBack.ALU_ResultW[31:0]
+(7)tb.dut.WriteBack.ALU_ResultW[31:0]
+(8)tb.dut.WriteBack.ALU_ResultW[31:0]
+(9)tb.dut.WriteBack.ALU_ResultW[31:0]
+(10)tb.dut.WriteBack.ALU_ResultW[31:0]
+(11)tb.dut.WriteBack.ALU_ResultW[31:0]
+(12)tb.dut.WriteBack.ALU_ResultW[31:0]
+(13)tb.dut.WriteBack.ALU_ResultW[31:0]
+(14)tb.dut.WriteBack.ALU_ResultW[31:0]
+(15)tb.dut.WriteBack.ALU_ResultW[31:0]
+(16)tb.dut.WriteBack.ALU_ResultW[31:0]
+(17)tb.dut.WriteBack.ALU_ResultW[31:0]
+(18)tb.dut.WriteBack.ALU_ResultW[31:0]
+(19)tb.dut.WriteBack.ALU_ResultW[31:0]
+(20)tb.dut.WriteBack.ALU_ResultW[31:0]
+(21)tb.dut.WriteBack.ALU_ResultW[31:0]
+(22)tb.dut.WriteBack.ALU_ResultW[31:0]
+(23)tb.dut.WriteBack.ALU_ResultW[31:0]
+(24)tb.dut.WriteBack.ALU_ResultW[31:0]
+(25)tb.dut.WriteBack.ALU_ResultW[31:0]
+(26)tb.dut.WriteBack.ALU_ResultW[31:0]
+(27)tb.dut.WriteBack.ALU_ResultW[31:0]
+(28)tb.dut.WriteBack.ALU_ResultW[31:0]
+(29)tb.dut.WriteBack.ALU_ResultW[31:0]
+(30)tb.dut.WriteBack.ALU_ResultW[31:0]
+(31)tb.dut.WriteBack.ALU_ResultW[31:0]
+@1401200
+-group_end
+@23
+tb.dut.WriteBack.ReadDataW[31:0]
+@22
+tb.dut.WriteBack.PCPlus4W[31:0]
+@28
+tb.dut.WriteBack.ResultSrcW[1:0]
+@22
+tb.dut.WriteBack.ResultW[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
