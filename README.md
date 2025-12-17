@@ -27,7 +27,7 @@ The core focuses on efficient execution by handling **data and control hazards**
     Handles **load-use stalls** (1-cycle bubble) and **branch flushes** (2-cycles via NOP).
 
 ### ⚡ Performance
-- Achieves an **average CPI $\approx 1.2727$** on the comprehensive test suite.
+- Achieves an **average CPI $\approx 1.3378$** on the comprehensive test suite.
 - Demonstrates **high throughput and efficiency** compared to the single-cycle version.
 
 ---
@@ -83,36 +83,41 @@ This command removes all generated files to reset the environment.
 
 ---
 
-## 📊 Custom Performance Testbench
+# 📊 RISC-V Custom Performance Testbench
 
-The benchmark program executed a total of **33 instructions**, categorized as follows:
-
-| **Instruction Type** | **Count** | **Percentage** |
-| :--- | :--- | :--- |
-| **R-type** | 21 | 63.64% |
-| **Load** | 2 | 6.06% |
-| **Jump** | 1 | 3.03% |
-| **I-type** | 6 | 18.18% |
-| **Branch** | 1 | 3.03% |
-| **Store** | 2 | 6.06% |
-| **Total** | **33** | **100%** |
+This report summarizes the performance of our **RISC-V ASM benchmark program** executed on the pipelined RTL design.
 
 ---
 
-## ⚙️ Performance Report
+## 📝 Instruction Distribution
 
-![RV32I Performance Report](Images/Performance_report.png)
+The benchmark program (program3) executed a total of **74 instructions**, categorized as follows:
 
-* **Theoretical Minimum Cycles:** The ideal cycle count for $N$ instructions in a $K$-stage pipeline is $(N - 1 + K)$.
-    * For $N = 33$ instructions and $K = 5$ stages: $(33 - 1 + 5) = 37$ cycles.
-* **Actual Cycles:** The simulation resulted in **42 cycles**, showing a penalty of **5 cycles** due to hazards (including branch/jump flush cycles and one load-use stall).
+| **Instruction Type** | **Count** | **Percentage** |
+| :--- | :--- | :--- |
+| **R-type** (add) | 11 | 14.9% |
+| **I-type** (addi) | 30 | 40.5% |
+| **Load** (lw) | 10 | 13.5% |
+| **Store** (sw) | 10 | 13.5% |
+| **Branch** (beq) | 13 | 17.6% |
+| **Total** | **74** | **100%** |
 
-| Core | Cycles | Instructions | CPI |
-| :--- | :--- | :--- | :--- |
-| Single-Cycle RV32I | 33 | 33 | 1.00 |
-| **Pipelined RV32I** | **42** | **33** | **1.27** |
+> **Note:** Counts reflect **instructions actually retired** in the RTL design. Branch flushes and load-use stalls affect the totals.
 
-* **Note:** While the Pipelined CPI ($1.27$) is greater than the Single-Cycle CPI ($1.00$), the pipelined design still achieves a better overall runtime due to its significantly shorter clock period per stage.
+---
+
+## ⚡ Summary Table
+
+| Core / Design | Cycles | Instructions Retired | CPI |
+|---------------|--------|--------------------|-----|
+| Ideal Single-Cycle | 74 | 74 | 1.00 |
+| **Pipelined RV32I (with stalls)** | **99** | **74** | **1.3378** |
+
+**Observations:**
+
+- The pipelined CPI > 1 due to **load-use and branch stalls**.  
+- Skipped dummy instructions and branch flushes explain why not all instructions in the HEX are counted as retired.  
+- Despite higher CPI, the pipelined design is faster in **real time**, as each pipeline stage has a shorter clock period than a single-cycle core.
 
 ---
 
