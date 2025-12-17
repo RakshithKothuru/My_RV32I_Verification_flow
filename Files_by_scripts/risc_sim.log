@@ -1,11 +1,11 @@
-WARNING: .\risc.v:149: $readmemh: Standard inconsistency, following 1364-2005.
-WARNING: .\risc.v:149: $readmemh(risc_memfile.hex): Not enough words in the file for the requested range [0:1023].
+WARNING: .\risc.v:152: $readmemh: Standard inconsistency, following 1364-2005.
+WARNING: .\risc.v:152: $readmemh(risc_memfile.hex): Not enough words in the file for the requested range [0:1023].
 VCD info: dumpfile risc.vcd opened for output.
 
 ---------------------------------------------
    Simulation Finished || Performance Report  
 ---------------------------------------------
-Total Cycles      : 53
-Instructions Ret. : 5
-Average CPI       : 10.600000
+Total Cycles      : 99
+Instructions Ret. : 74
+Average CPI       : 1.337838
 ---------------------------------------------
