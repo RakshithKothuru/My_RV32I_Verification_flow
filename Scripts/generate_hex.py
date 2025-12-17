@@ -1,166 +1,194 @@
 import sys
-import os
 
-# --- Configuration ---
-# Name of the assembly file to read (your input)
-INPUT_ASM_FILE = "program.asm"
-# Name of the HEX file to write (your output for Verilog)
+# ================= CONFIG =================
+INPUT_ASM_FILE  = "program.asm"
 OUTPUT_HEX_FILE = "risc_memfile.hex"
+# ==========================================
 
-# --- Opcode and Function Code Definitions (Simplified Set) ---
-# NOTE: This is a highly simplified set for R-type and I-type instructions.
-# A full RISC-V assembler is complex and requires full opcode/funct3/funct7 mappings.
-
-# R-Type: ADD, SUB, AND (Opcode 0110011)
+# ================= OPCODES =================
 OP_R_TYPE = '0110011'
-
-FUNCT3 = {
-    'add': '000',
-    'sub': '000',  # (Needs funct7 check)
-    'and': '111',
-    'or':  '110'
-}
-
-FUNCT7 = {
-    'add': '0000000',
-    'sub': '0100000',
-    'and': '0000000',
-    'or':  '0000000'
-}
-
-# I-Type: ADDI (Opcode 0010011)
 OP_I_TYPE = '0010011'
+OP_LOAD   = '0000011'
+OP_STORE  = '0100011'
+OP_BRANCH = '1100011'
+OP_JAL    = '1101111'
+# ==========================================
+
+# ================= FUNCT TABLES =================
+FUNCT3_R = {
+    'add':'000','sub':'000','and':'111','or':'110','xor':'100'
+}
+
+FUNCT7_R = {
+    'add':'0000000','sub':'0100000','and':'0000000','or':'0000000','xor':'0000000'
+}
 
 FUNCT3_I = {
-    'addi': '000'
+    'addi':'000','andi':'111','ori':'110','xori':'100'
 }
 
-# --- Register Mapping (x0 to x31) ---
-# Maps assembly register names (e.g., x1) to their 5-bit binary code.
+FUNCT3_LOAD  = {'lw':'010'}
+FUNCT3_STORE = {'sw':'010'}
+
+FUNCT3_BRANCH = {
+    'beq':'000','bne':'001'
+}
+# ================================================
+
+# ================= REGISTERS =================
 REGISTERS = {f'x{i}': format(i, '05b') for i in range(32)}
-# -----------------------------------
+# ==============================================
 
-def get_register_binary(reg_name):
-    """Checks and returns the 5-bit binary code for a register."""
-    if reg_name not in REGISTERS:
-        raise ValueError(f"Invalid register name: {reg_name}")
-    return REGISTERS[reg_name]
+def get_reg(r):
+    if r not in REGISTERS:
+        raise ValueError(f"Invalid register {r}")
+    return REGISTERS[r]
 
-def assemble_r_type(parts):
-    """
-    Assembles R-Type instruction: OPERATION Rd, Rs1, Rs2
-    Format: funct7 (7) | Rs2 (5) | Rs1 (5) | funct3 (3) | Rd (5) | opcode (7)
-    """
-    op_name = parts[0].lower()
+def imm_bin(val, bits):
+    """Returns 2's complement signed binary string of length 'bits'."""
+    return format(val & ((1 << bits) - 1), f'0{bits}b')
 
-    # Handle SUB: funct7 is different
-    funct7_val = FUNCT7[op_name]
-    if op_name == 'sub':
-        funct7_val = '0100000'
+# ================= ASSEMBLERS =================
 
-    machine_code = (
-        funct7_val +
-        get_register_binary(parts[3]) +  # Rs2
-        get_register_binary(parts[2]) +  # Rs1
-        FUNCT3[op_name] +                # funct3
-        get_register_binary(parts[1]) +  # Rd
-        OP_R_TYPE                        # opcode
+def assemble_r(parts):
+    op = parts[0]
+    return (
+        FUNCT7_R[op] +
+        get_reg(parts[3]) +
+        get_reg(parts[2]) +
+        FUNCT3_R[op] +
+        get_reg(parts[1]) +
+        OP_R_TYPE
     )
-    return machine_code
 
-def assemble_i_type(parts):
-    """
-    Assembles I-Type instruction: ADDI Rd, Rs1, Imm
-    Format: immediate (12) | Rs1 (5) | funct3 (3) | Rd (5) | opcode (7)
-    """
-    op_name = parts[0].lower()
-
-    imm_val = int(parts[3])
-
-    # The immediate is 12 bits. Check if it fits (or truncate)
-    if imm_val < -2048 or imm_val > 2047:
-        print(f"Warning: Immediate value {imm_val} for {op_name} is outside the 12-bit signed range.")
-
-    # Format the immediate as 12-bit signed binary
-    imm_binary = format(imm_val & 0xFFF, '012b')
-
-    machine_code = (
-        imm_binary +                     # Imm (12 bits)
-        get_register_binary(parts[2]) +  # Rs1
-        FUNCT3_I[op_name] +              # funct3
-        get_register_binary(parts[1]) +  # Rd
-        OP_I_TYPE                        # opcode
+def assemble_i(parts, funct3, opcode):
+    rd = get_reg(parts[1])
+    if opcode == OP_LOAD:
+        # lw format: lw rd, offset(rs1)
+        offset_part = parts[2]
+        imm_str, rs1_str = offset_part.replace(')','').split('(')
+        rs1 = get_reg(rs1_str)
+        imm = int(imm_str)
+    else:
+        # addi format: addi rd, rs1, imm
+        rs1 = get_reg(parts[2])
+        imm = int(parts[3])
+    return (
+        imm_bin(imm, 12) +
+        rs1 +
+        funct3 +
+        rd +
+        opcode
     )
-    return machine_code
+
+def assemble_s(parts):
+    # sw format: sw rs2, offset(rs1)
+    rs2 = get_reg(parts[1])
+    offset_part = parts[2]
+    imm_str, rs1_str = offset_part.replace(')','').split('(')
+    rs1 = get_reg(rs1_str)
+    imm = int(imm_str)
+    imm12 = imm_bin(imm, 12)
+    # S-type: imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode
+    return (
+        imm12[:7] +
+        rs2 +
+        rs1 +
+        FUNCT3_STORE[parts[0]] +
+        imm12[7:] +
+        OP_STORE
+    )
+
+def assemble_b(parts):
+    # bne/beq format: bne rs1, rs2, imm
+    rs1 = get_reg(parts[1])
+    rs2 = get_reg(parts[2])
+    imm = int(parts[3])
+    imm13 = imm_bin(imm, 13)
+    # B-type: imm[12]|imm[10:5]|rs2|rs1|funct3|imm[4:1]|imm[11]|opcode
+    return (
+        imm13[0] +        # imm[12]
+        imm13[2:8] +      # imm[10:5]
+        rs2 +
+        rs1 +
+        FUNCT3_BRANCH[parts[0]] +
+        imm13[8:12] +     # imm[4:1]
+        imm13[1] +        # imm[11]
+        OP_BRANCH
+    )
+
+def assemble_jal(parts):
+    # jal rd, imm
+    rd = get_reg(parts[1])
+    imm = int(parts[2])
+    imm21 = imm_bin(imm, 21)
+    # J-type: imm[20]|imm[10:1]|imm[11]|imm[19:12]|rd|opcode
+    return (
+        imm21[0] +
+        imm21[10:20] +
+        imm21[9] +
+        imm21[1:9] +
+        rd +
+        OP_JAL
+    )
+
+# ================= PARSER =================
 
 def assemble_line(line):
-    """Parses a single line of assembly and returns its 32-bit machine code."""
-    line = line.strip()
-    if not line or line.startswith('#'):
-        return None  # Ignore comments and empty lines
-
-    # Normalize the instruction (e.g., "ADD x1, x2, x3" -> "ADD x1 x2 x3")
-    parts = line.replace(',', ' ').split()
-    if not parts:
+    line = line.split('#')[0].strip()
+    if not line:
         return None
 
-    instruction = parts[0].lower()
+    parts = line.replace(',', ' ').split()
+    inst = parts[0].lower()
 
-    if instruction in FUNCT3 and instruction in FUNCT7:
-        # R-Type: ADD, SUB, AND, OR
-        if len(parts) != 4:
-            raise ValueError(f"R-Type instruction '{instruction}' requires 3 operands. Found: {len(parts)-1}")
-        return assemble_r_type(parts)
-
-    elif instruction in FUNCT3_I:
-        # I-Type: ADDI
-        if len(parts) != 4:
-            raise ValueError(f"I-Type instruction '{instruction}' requires 3 operands. Found: {len(parts)-1}")
-        return assemble_i_type(parts)
-
+    if inst in FUNCT3_R:
+        return assemble_r(parts)
+    elif inst in FUNCT3_I:
+        return assemble_i(parts, FUNCT3_I[inst], OP_I_TYPE)
+    elif inst in FUNCT3_LOAD:
+        return assemble_i(parts, FUNCT3_LOAD[inst], OP_LOAD)
+    elif inst in FUNCT3_STORE:
+        return assemble_s(parts)
+    elif inst in FUNCT3_BRANCH:
+        return assemble_b(parts)
+    elif inst == 'jal':
+        return assemble_jal(parts)
     else:
-        raise NotImplementedError(f"Instruction '{instruction}' is not implemented in this assembler script.")
+        raise NotImplementedError(f"{inst} not supported")
+
+# ================= MAIN =================
 
 def main():
-    """Main function to read assembly, assemble, and write hex file."""
-    print("--- RISC-V HEX File Generator ---")
+    print("---- RV32I HEX GENERATOR ----")
 
     try:
-        # 1. Read Assembly Input
-        with open(INPUT_ASM_FILE, 'r') as f:
-            assembly_lines = f.readlines()
+        with open(INPUT_ASM_FILE) as f:
+            lines = f.readlines()
 
         machine_codes = []
-        for i, line in enumerate(assembly_lines):
+        for i, line in enumerate(lines):
             try:
                 mc = assemble_line(line)
                 if mc:
                     machine_codes.append(mc)
-            except (ValueError, NotImplementedError) as e:
-                print(f"Error on line {i+1} ('{line.strip()}'): {e}", file=sys.stderr)
+            except Exception as e:
+                print(f"Error at line {i+1}: {line.strip()}")
+                print(e)
                 sys.exit(1)
 
-        # 2. Write Hex Output
         if not machine_codes:
-            print(f"Error: No valid instructions found in {INPUT_ASM_FILE}", file=sys.stderr)
-            sys.exit(1)
+            raise RuntimeError("No valid instructions found")
 
         with open(OUTPUT_HEX_FILE, 'w') as f:
             for mc in machine_codes:
-                hex_code = format(int(mc, 2), '08x')   # 32-bit hex
-                f.write(f"{hex_code}\n")
+                f.write(f"{int(mc,2):08x}\n")
 
-        print(f" Success! Generated {len(machine_codes)} instructions.")
-        print(f"Output written to: {OUTPUT_HEX_FILE}")
+        print(f"Generated {len(machine_codes)} instructions")
+        print(f"Output: {OUTPUT_HEX_FILE}")
 
     except FileNotFoundError:
-        print(f"Error: Input file '{INPUT_ASM_FILE}' not found.", file=sys.stderr)
-        print("Please create this file and add your assembly instructions.")
-        sys.exit(1)
-
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}", file=sys.stderr)
-        sys.exit(1)
+        print(f"File {INPUT_ASM_FILE} not found")
 
 if __name__ == "__main__":
     main()
