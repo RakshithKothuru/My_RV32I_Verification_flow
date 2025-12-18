@@ -1,4 +1,4 @@
-# 🚀 RISC-V Verification Flow
+# 🚀 RV32I Verification Flow
 
 ## 📌 Project Overview
 This repository contains the RTL design and simulation environment for a 5-stage pipelined 32-bit **RISC-V** processor.
