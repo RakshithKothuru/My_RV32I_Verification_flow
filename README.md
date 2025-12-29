@@ -95,11 +95,11 @@ The benchmark program (program3) executed a total of **74 instructions**, catego
 
 | **Instruction Type** | **Count** | **Percentage** |
 | :--- | :--- | :--- |
-| **R-type** (add) | 11 | 14.9% |
-| **I-type** (addi) | 30 | 40.5% |
-| **Load** (lw) | 10 | 13.5% |
-| **Store** (sw) | 10 | 13.5% |
-| **Branch** (beq) | 13 | 17.6% |
+| **R-type** (add) | 11 | 14.85% |
+| **I-type** (addi) | 40 | 54.05% |
+| **Load** (lw) | 1 | 1.35% |
+| **Store** (sw) | 3 | 4.05% |
+| **Branch** (beq) | 19 | 25.65% |
 | **Total** | **74** | **100%** |
 
 > **Note:** Counts reflect **instructions actually retired** in the RTL design. Branch flushes and load-use stalls affect the totals.
