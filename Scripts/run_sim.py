@@ -7,16 +7,18 @@ import shutil
 # --- GLOBAL CONFIGURATION (Should be the only global definitions outside the class) ---
 GTKWAVE_COMMAND = 'gtkwave'
 HEX_GENERATOR_SCRIPT = "generate_hex.py"
-# ----------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------- 
 
 class RiscvSimFlow:
     """
     Manages the entire RISC-V verification flow, holding configuration
     and execution logic for each step (Compile, Sim, GTKWave, Clean).
     """
+
+    # __init__ is the constructor and will be called when the object is created
     def __init__(self, verilog_dir="."):
         # --- Project File Configuration (Class Attributes) ---
-        self.VERILOG_DIR = verilog_dir
+        self.VERILOG_DIR = verilog_dir  #Verilog_dir = "." means Current directory of the script
         self.DESIGN_FILE = "risc.v"
         self.TESTBENCH_FILE = "risc_tb.v"
         self.OUTPUT_SIM_NAME = "riscv_sim_executable"
@@ -31,10 +33,10 @@ class RiscvSimFlow:
         self.VCD_FILE_PATH = os.path.join(self.VERILOG_DIR, self.VCD_FILE_NAME)
         self.HEX_FILE_PATH = os.path.join(self.VERILOG_DIR, self.HEX_FILE_NAME)
         self.LOG_FILE_PATH = os.path.join(self.VERILOG_DIR, self.LOG_FILE_NAME)
-        # ---------------------------------------------------
+    # ---------------------------------------------------
 
     # --- UTILITY FUNCTION: Runs an external process ---
-    def _run_process(self, command, step_name, output_file=None):
+    def _run_process(self, command, step_name, output_file=None, exit_on_fail=True):
         """Utility function to run a command and handle errors, now an internal method."""
         print(f"\n--- {step_name.upper()} ---")
         print(f"Running command: {' '.join(command)}")
@@ -73,9 +75,13 @@ class RiscvSimFlow:
             print(f"\n {step_name} FAILED with exit code: {e.returncode}", file=sys.stderr)
             if e.stderr:
                 print(f"Stderr: {e.stderr}", file=sys.stderr)
-            elif os.path.exists(output_file):
+            elif output_file and os.path.exists(output_file):
                 print(f"Check simulation log for details: {output_file}", file=sys.stderr)
-            sys.exit(1)
+
+            if exit_on_fail:
+                sys.exit(1)
+            else:
+                return False
 
         except FileNotFoundError:
             print(f"\n CRITICAL ERROR: The tool '{command[0]}' was not found...", file=sys.stderr)
@@ -108,15 +114,20 @@ class RiscvSimFlow:
 
     # --------- FLOW STEP: Instruction Hex Generation ---------------------------------------
 
-    def generate_hex(self):
+    def generate_hex(self, asm_file=None):
         """Runs the assembly-to-hex generator script."""
-        hex_gen_command = [sys.executable, HEX_GENERATOR_SCRIPT]
+        if asm_file:
+            hex_gen_command = [sys.executable, HEX_GENERATOR_SCRIPT, asm_file]
+            print(f"Using ASM program: {asm_file}")
+        else:
+            hex_gen_command = [sys.executable, HEX_GENERATOR_SCRIPT]
+
         self._run_process(hex_gen_command, "Hex File Generation")
 
         if not os.path.exists(self.HEX_FILE_PATH):
-            print(f"\n ERROR: Hex file '{self.HEX_FILE_NAME}' was not created by '{HEX_GENERATOR_SCRIPT}'. Check generator script output.", file=sys.stderr)
+            print(f"\n ERROR: Hex file '{self.HEX_FILE_NAME}' was not created.", file=sys.stderr)
             sys.exit(1)
-        print(f"Hex file check successful: {self.HEX_FILE_NAME} is ready.")
+
 
     # --------- FLOW STEP: Compilation -----------------------------------------------------
 
@@ -176,6 +187,57 @@ class RiscvSimFlow:
             subprocess.Popen(gtkwave_base_cmd)
         print(f"Opened {self.VCD_FILE_NAME} in GTKWave.")
 
+    # --------- FLOW STEP: Regression Testing ----------------------------------------------
+
+    def run_regression(self):
+        """Runs regression on all program*.asm files in the current directory."""
+        print("\n--- REGRESSION MODE ENABLED ---")
+
+        asm_files = sorted(
+            f for f in os.listdir(self.VERILOG_DIR)
+            if f.startswith("program") and f.endswith(".asm")
+        )
+
+        if not asm_files:
+            print("No program*.asm files found. Regression aborted.", file=sys.stderr)
+            sys.exit(1)
+
+        total = len(asm_files)
+        passed = 0
+        failed = 0
+
+        # Compile once (RTL doesn't change)
+        self.compile_design()
+
+        for asm in asm_files:
+            print(f"\n===== RUNNING TEST: {asm} =====")
+
+            self.generate_hex(asm)
+
+            # Create a unique log file for each program
+            log_file = os.path.splitext(asm)[0] + ".log"
+            log_path = os.path.join(self.VERILOG_DIR, log_file)
+
+            ok = self._run_process(
+                ['vvp', f"./{self.OUTPUT_SIM_NAME}"],
+                f"Simulation ({asm})",
+                output_file=log_path,
+                exit_on_fail=False
+            )
+            if ok:
+                print(f" RESULT: PASS ({asm})")
+                passed += 1
+            else:
+                print(f" RESULT: FAIL ({asm})")
+                failed += 1
+    
+
+        print("\n========= REGRESSION SUMMARY =========")
+        print(f"Total tests : {total}")
+        print(f"Passed      : {passed}")
+        print(f"Failed      : {failed}")
+        print("=====================================")
+
     # --------- FLOW STEP: Clean up generated files --------------------------------------
 
     def clean(self):
@@ -216,6 +278,7 @@ def parse_arguments():
     parser.add_argument('--clean', action='store_true', help='Remove all generated files and exit.')
     parser.add_argument('--no-sim', action='store_true', help='Compile the design but skip the VVP simulation and GTKWave launch.')
     parser.add_argument('--no-gui', action='store_true', help='Run the full simulation but skip launching GTKWave.')
+    parser.add_argument('--regress', action='store_true', help='Run regression on all program*.asm files')
     return parser.parse_args()
 
 
@@ -234,6 +297,10 @@ def main():
     
     # Pre-check tools (Essential step)
     flow.check_tool_availability()
+
+    if args.regress:
+        flow.run_regression()
+        sys.exit(0)
     
     # 1. Generate Hex
     flow.generate_hex()
@@ -252,6 +319,7 @@ def main():
         print("\nSkipping simulation and GUI launch per --no-sim flag. Compilation successful.")
 
     print("\n--- Flow Complete ---")
+
 
 if __name__ == "__main__":
     main()
