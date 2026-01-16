@@ -41,45 +41,88 @@ The core focuses on efficient execution by handling **data and control hazards**
 
 # 💻 Development and Simulation Flow (Automated Scripts)
 
-The entire verification process is managed by a modular Python flow control script (`run_sim.py`), which handles the assembly-to-hex conversion, compilation, simulation, and analysis.
+The entire verification process is managed by a modular Python flow control script (`run_sim.py`), which automates assembly-to-hex conversion, compilation, simulation, regression execution, and log management.
 
-### 1. `generate_hex.py` (Instruction Converter)
+---
 
-This script is crucial for setting up the simulation:
+## 1. `generate_hex.py` (Instruction Converter)
 
-* **Function:** Converts the human-readable assembly program file (`program.asm`) into a machine-readable format.
-* **Output:** The **`risc_memfile.hex`** file, which is loaded into the Instruction Memory module (`risc.v`) at initialization.
+This script is responsible for preparing the instruction memory contents for simulation.
 
-### 2. `run_sim.py` (Verification Flow Manager)
+- **Function:** Converts human-readable RISC-V assembly programs (`.asm`) into machine-readable hex format.
+- **Output:** Generates **`risc_memfile.hex`**, which is loaded into the Instruction Memory module (`risc.v`) during simulation initialization.
 
-This is the main entry point for running the verification flow. It orchestrates the entire process using **Icarus Verilog (`iverilog`/`vvp`)** and **GTKWave**.
+---
 
-* **Simulation Output:** During execution, the VVP simulation results (messages, register writes, final status) are redirected to the **`risc_sim.log`** file for easy analysis.
+## 2. `run_sim.py` (Verification Flow Manager)
 
-### ⚙️ Main Command
+This is the main entry point for running the verification flow. It orchestrates the complete process using **Icarus Verilog (`iverilog` / `vvp`)** and **GTKWave**.
 
-The default command executes the full flow: Hex generation, Compilation, Simulation, and GTKWave launch.
+### Key Responsibilities
+- RTL compilation using `iverilog`
+- Simulation execution using `vvp`
+- Automated GTKWave launch for waveform analysis
+- **Multi-program regression support**
+- **Per-test log file generation for clean debugging**
+
+### 📄 Simulation Logs
+- Each test program produces a **separate log file** (e.g., `program1.log`, `program2.log`)
+- Logs capture simulation messages, performance statistics, and final execution status
+- Enables easy comparison and debugging across regression runs
+
+---
+
+## ⚙️ Main Commands
+
+### ▶️ Single Test Execution
+
+Runs the full flow for a single program:
+- Hex generation
+- Compilation
+- Simulation
+- GTKWave launch
 
 | Command | Description |
-| :--- | :--- |
-| `python run_sim.py` | Runs the full verification flow. |
+|------|------------|
+| `python run_sim.py` | Runs the complete verification flow |
 
-### 🔬 Simulation Control Commands
+---
 
-The `run_sim.py` script accepts optional flags to skip specific steps, useful for debugging or quick re-runs.
+## 🔁 Regression Mode
+
+Regression mode executes **all `program*.asm` files** present in the directory using a single compiled RTL.
+
+| Command | Description |
+|------|------------|
+| `python run_sim.py --regress` | Runs multi-program regression with per-test logs |
+
+At the end of regression, a summary is printed showing:
+- Total tests
+- Passed tests
+- Failed tests
+
+> **Note:** PASS indicates successful simulation completion and correct end-to-end flow execution.
+
+---
+
+## 🔬 Simulation Control Commands
+
+Optional flags allow skipping specific steps for faster iteration and debugging.
 
 | Command | Effect | Use Case |
-| :--- | :--- | :--- |
-| `python run_sim.py --no-sim` | **Skips** the VVP simulation and GTKWave. | Used for quick syntax check and **compilation-only** runs. |
-| `python run_sim.py --no-gui` | **Skips** launching GTKWave. | Used when you only need to check the **log file output** (`risc_sim.log`) without viewing waveforms. |
+|------|------|--------|
+| `python run_sim.py --no-sim` | Skips VVP simulation and GTKWave | Quick **compile-only** check |
+| `python run_sim.py --no-gui` | Skips GTKWave launch | Log-based verification without waveform viewing |
 
-### 🧹 Cleaning Command
+---
 
-This command removes all generated files to reset the environment.
+## 🧹 Cleaning Command
+
+Removes all generated artifacts to reset the workspace.
 
 | Command | Files Removed |
-| :--- | :--- |
-| `python run_sim.py --clean` | `riscv_sim_executable`, `risc.vcd`, `risc_memfile.hex`, **`risc_sim.log`** |
+|------|--------------|
+| `python run_sim.py --clean` | `riscv_sim_executable`, `risc.vcd`, `risc_memfile.hex`, `*.log` |
 
 ---
 
