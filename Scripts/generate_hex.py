@@ -1,7 +1,6 @@
 import sys
 
 # ================= CONFIG =================
-INPUT_ASM_FILE  = "program.asm"
 OUTPUT_HEX_FILE = "risc_memfile.hex"
 # ==========================================
 
@@ -140,7 +139,7 @@ def assemble_line(line):
         return None
 
     parts = line.replace(',', ' ').split()
-    inst = parts[0].lower()
+    inst = parts[0].lower()  # inst is like add,sub,lw,sw and lower() is to make it case insensitive
 
     if inst in FUNCT3_R:
         return assemble_r(parts)
@@ -160,10 +159,21 @@ def assemble_line(line):
 # ================= MAIN =================
 
 def main():
-    print("---- RV32I HEX GENERATOR ----")
+    print("---- RV32I INSTRUCTION GENERATOR ----")
+
+    # -------- Argument Handling --------
+    if len(sys.argv) > 1:
+        input_asm_file = sys.argv[1]
+    else:
+        input_asm_file = "program.asm"  # default for single-test flow
+
+    print(f"Input ASM : {input_asm_file}")
+    print(f"Output HEX: {OUTPUT_HEX_FILE}")
+    # -----------------------------------
+
 
     try:
-        with open(INPUT_ASM_FILE) as f:
+        with open(input_asm_file) as f:
             lines = f.readlines()
 
         machine_codes = []
@@ -188,7 +198,8 @@ def main():
         print(f"Output: {OUTPUT_HEX_FILE}")
 
     except FileNotFoundError:
-        print(f"File {INPUT_ASM_FILE} not found")
+        print(f"File {input_asm_file} not found")
 
 if __name__ == "__main__":
     main()
+
