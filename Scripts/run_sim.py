@@ -239,10 +239,12 @@ class RiscvSimFlow:
         print("=====================================")
 
     # --------- FLOW STEP: Clean up generated files --------------------------------------
+        # --------- FLOW STEP: Clean up generated files --------------------------------------
 
     def clean(self):
         """Removes all generated simulation and temporary files."""
         print("\n--- CLEANING PROJECT FILES ---")
+
         files_to_remove = [
             self.OUTPUT_SIM_NAME,
             self.VCD_FILE_PATH,
@@ -251,6 +253,8 @@ class RiscvSimFlow:
         ]
         
         cleaned_count = 0
+
+        # Remove specific known files
         for file_path in files_to_remove:
             if os.path.exists(file_path):
                 try:
@@ -259,6 +263,16 @@ class RiscvSimFlow:
                     cleaned_count += 1
                 except OSError as e:
                     print(f"  [ERROR] Could not delete {file_path}: {e}", file=sys.stderr)
+
+        # Remove all .log files in current directory
+        for file in os.listdir('.'):
+            if file.endswith('.log'):
+                try:
+                    os.remove(file)
+                    print(f"  [DELETED] {file}")
+                    cleaned_count += 1
+                except OSError as e:
+                    print(f"  [ERROR] Could not delete {file}: {e}", file=sys.stderr)
 
         if cleaned_count == 0:
             print("No simulation files found to clean.")
